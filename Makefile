@@ -15,10 +15,6 @@ build:
 lint: bin/golangci-lint
 	go fmt ./...
 	go vet ./...
-	bin/golangci-lint -c .golangci.yml run ./...
-
-bin/golangci-lint:
-	wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.32.0
 
 gen-mocks: bin/moq
 
