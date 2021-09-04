@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <img width="350" src="docs/logo.png" alt="ArminC AutoExec">
+  <img width="400" src="docs/logo.png" alt="ArminC AutoExec">
 </h1>
 
 <h4 align="center">A Golang scalable reverse proxy.</h4>
