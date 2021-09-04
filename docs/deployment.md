@@ -17,18 +17,15 @@ The service is listening in the port `8080`.
 make run
 ```
 
-After compiling the binary file and executing the service, the output will be:
-```sh
-go run cmd/proxy/main.go
-timestamp=2021-09-04T18:34:15.489618Z service=reverse-proxy address=127.0.0.1:8080 status=listening...
-```
-
 ---
 
 ## Deployment using docker-compose
 ```sh
 docker-compose run reverse-proxy
 ```
+
+**Note:** 
+- Since Docker for MacOS is actually running inside a Linux VM, you won't be able to access the container even though the service is using the `network_mode: host`. With this being said, the [Simple local deployment](#simple-local-deployment) should be a better approach in this situation.
 
 ---
 
