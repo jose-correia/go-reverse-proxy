@@ -8,8 +8,11 @@ type YamlConfig struct {
 	Proxy ProxyYamlConfig
 }
 
+// ToConfiguration parses a yamlConfiguration into the internal
+// Configurations representation of the reverse proxy service
 func (y *YamlConfig) ToConfiguration() (*Configuration, error) {
-	var services []*Service
+	services := make(map[string]*Service)
+
 	for _, service := range y.Proxy.Services {
 		var hosts []*Host
 		for _, host := range service.Hosts {
@@ -19,18 +22,18 @@ func (y *YamlConfig) ToConfiguration() (*Configuration, error) {
 			})
 		}
 
-		services = append(services, &Service{
+		services[service.Domain] = &Service{
 			Name:   service.Name,
 			Domain: service.Domain,
 			Hosts:  hosts,
-		})
+		}
 	}
 
 	hostAddress := y.Proxy.Listen.Address
 	hostPort := y.Proxy.Listen.Port
 
 	if len(services) < 1 || hostAddress == "" || hostPort == 0 {
-		return nil, fmt.Errorf("the .yaml configuration is invalid.")
+		return nil, fmt.Errorf("the .yaml configuration is invalid")
 	}
 
 	return &Configuration{

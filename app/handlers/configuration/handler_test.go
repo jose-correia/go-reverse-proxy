@@ -24,8 +24,8 @@ func TestParseYamlData(t *testing.T) {
 			Address: "127.0.0.1",
 			Port:    8080,
 		},
-		Services: []*values.Service{
-			{
+		Services: map[string]*values.Service{
+			"my-service.my-company.com": {
 				Name:   "my-service",
 				Domain: "my-service.my-company.com",
 				Hosts: []*values.Host{

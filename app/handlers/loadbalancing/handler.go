@@ -11,9 +11,8 @@ import (
 )
 
 type Handler interface {
-	// Route() chooses one of the hosts in a slice, by applying the
-	// load balancing algorithm configured
-	Route(ctx context.Context, hosts []*values.Host) (*values.Host, error)
+	// SetNextHost chooses the next host to request to
+	SetNextHost(ctx context.Context, service *values.Service)
 }
 
 type DefaultHandler struct {
@@ -31,9 +30,16 @@ func New(
 	return svc
 }
 
-func (h *DefaultHandler) Route(
+func (h *DefaultHandler) SetNextHost(
 	ctx context.Context,
-	host []*values.Host,
-) (*values.Host, error) {
-	return nil, nil
+	service *values.Service,
+) {
+	nextHostIndex := service.NextHostIndex + 1
+
+	if int(nextHostIndex) >= len(service.Hosts) {
+		nextHostIndex = 0
+	}
+
+	service.NextHostIndex = nextHostIndex
+	return
 }
