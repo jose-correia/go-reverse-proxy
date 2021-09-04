@@ -3,11 +3,12 @@
   <img width="500" src="docs/logo.png" alt="ArminC AutoExec">
 </h1>
 
-<h4 align="center">A Golang scalable reverse proxy.</h4>
+<h4 align="center">A Golang scalable reverse proxy</h4>
 
 <p align="center">
   <a href="#about">About</a> •
-  <a href="#main-dependencies">Main Dependencies</a> •
+<a href="#architecture">Architecture</a> •
+  <a href="#dependencies">Dependencies</a> •
   <a href="#configuration">Configuration</a> •
   <a href="#test">Test</a> •
   <a href="#deployment">Deployment</a> •
@@ -20,7 +21,10 @@
 
 The `go-reverse-proxy` service is a Golang reverse proxy implementation, completely configured to be deployed in a Kubernetes environment and scale as needed.
 
-## Main dependencies
+## Architecture
+
+
+## Dependencies
 - [go-kit](https://github.com/go-kit/kit)
 - [gorilla/mux](https://github.com/gorilla/mux)
 - [go-retryablehttp](https://github.com/hashicorp/go-retryablehttp)
