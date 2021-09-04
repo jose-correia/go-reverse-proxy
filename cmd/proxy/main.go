@@ -86,7 +86,8 @@ func main() {
 			os.Exit(1)
 		}
 
-		logger.Log("service", "reverseProxyAPI", "addr", listenerAddress)
+		logger.Log(
+			"service", "reverse-proxy", "address", listenerAddress, "status", "listening...")
 
 		g.Add(func() error {
 			return http.Serve(

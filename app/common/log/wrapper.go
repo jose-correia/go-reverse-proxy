@@ -11,8 +11,7 @@ import (
 func NewLogger() log.Logger {
 	var logger log.Logger
 	logger = log.NewLogfmtLogger(os.Stderr)
-	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
-	logger = log.With(logger, "caller", log.Caller(4))
+	logger = log.With(logger, "timestamp", log.DefaultTimestampUTC)
 	return logger
 }
 

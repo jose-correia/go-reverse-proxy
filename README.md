@@ -1,15 +1,29 @@
-# Golang Reverse Proxy
+# Reverse Proxy
 
 
-# Deploying to minikube
+## Configuration
 
-- Set the cluster docker environment as the current docker environment
-`eval $(minikube docker-env)`
+The template configuration file can be found in [Proxy Config](proxy-configs/proxyConfig.yaml)
 
-- Build the image:
-`make docker-build`
+```yaml
+proxy:
 
-- Install Helm Chart:
-`make helm-install`
+  listen:
+    address: "127.0.0.1"
+    port: 8080
 
+  services:
+
+    - name: my-service
+      domain: my-service.my-company.com
+      hosts:
+        - address: "10.0.0.1"
+          port: 9090
+        - address: "10.0.0.2"
+          port: 9090
+```
+
+## Deployment
+
+Steps to deploy the service can be found on the [Deployment](docs/deployment.md) doc.
 
