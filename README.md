@@ -47,7 +47,7 @@ The system architecture design can be viewed in the [Architecture](docs/architec
 - [gorilla/mux](https://github.com/gorilla/mux)
 - [go-retryablehttp](https://github.com/hashicorp/go-retryablehttp)
 - [go-yaml](https://github.com/go-yaml/yaml)
-
+- [httpcache](https://github.com/bxcodec/httpcache)
 
 ## Configuration
 
