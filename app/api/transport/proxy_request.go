@@ -3,11 +3,13 @@ package transport
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 
 	encoder "go-reverse-proxy/app/common/encoder"
+	"go-reverse-proxy/app/values"
 
 	"github.com/go-kit/kit/log"
 )
@@ -15,11 +17,7 @@ import (
 type forwardRequestHTTPProvider interface {
 	Forward(
 		ctx context.Context,
-		method string,
-		header http.Header,
-		hostHeader string,
-		parameters string,
-		payload []byte,
+		request *values.Request,
 	) (
 		[]byte, int, error)
 }
@@ -45,13 +43,16 @@ func (c *forwardRequestHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.R
 		return
 	}
 
+	fmt.Println(req.URL.RawQuery)
 	response, statusCode, err := c.provider.Forward(
 		req.Context(),
-		req.Method,
-		req.Header,
-		req.Host,
-		req.URL.RawQuery,
-		payload,
+		&values.Request{
+			Method:     req.Method,
+			Header:     req.Header,
+			HostHeader: req.Host,
+			Parameters: req.URL.RawQuery,
+			Payload:    payload,
+		},
 	)
 	if err != nil {
 		c.logger.Log("transport", "proxyRequest/HTTP", "error", err.Error())
@@ -63,7 +64,7 @@ func (c *forwardRequestHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.R
 	_, err = io.Copy(w, bytes.NewReader(response))
 	if err != nil {
 		c.logger.Log("transport", "proxyRequest/HTTP", "error", err.Error())
-		encoder.Encode(req.Context(), &encoder.Error{Code: 500, Message: err.Error()}, w)
+		encoder.Encode(req.Context(), &encoder.Error{Code: http.StatusInternalServerError, Message: err.Error()}, w)
 		return
 	}
 	c.logger.Log("transport", "proxyRequest/HTTP")

@@ -20,11 +20,7 @@ type Handler interface {
 	// the request.
 	Forward(
 		ctx context.Context,
-		method string,
-		header http.Header,
-		hostHeader string,
-		parameters string,
-		payload []byte,
+		request *values.Request,
 	) ([]byte, int, error)
 }
 
@@ -54,33 +50,79 @@ func New(
 
 func (h *DefaultHandler) Forward(
 	ctx context.Context,
-	method string,
-	header http.Header,
-	hostHeader string,
-	parameters string,
-	payload []byte,
+	request *values.Request,
 ) ([]byte, int, error) {
-	service := h.configuration.GetServiceByDomain(hostHeader)
+	service := h.configuration.GetServiceByDomain(request.HostHeader)
 	if service == nil {
 		return []byte{}, http.StatusNotFound, nil
 	}
 
-	host := service.GetNextHost()
-
-	responseBody, statusCode, err := h.httpClient.Request(
+	responseBody, statusCode, err := h.retryableForwarding(
 		ctx,
-		method,
-		host.ToURL(),
-		header,
-		parameters,
-		payload,
+		request,
+		service,
 	)
 
-	// to improve latency, we perform the load balancing in the
-	// a goroutine in the background and respond immediately
-	go func() {
+	return responseBody, statusCode, err
+}
+
+// retryableForwarding tries to perform a request to the service instance
+// that the load balancer chose. If the request fails and is retriable,
+// the proxy chooses a new instance and retries the request flow.
+func (h *DefaultHandler) retryableForwarding(
+	ctx context.Context,
+	request *values.Request,
+	service *values.Service,
+) ([]byte, int, error) {
+	var responseBody []byte
+	var statusCode int
+	var err error
+	var retryCount int
+	shouldRetry := true
+
+	for shouldRetry {
+		// get next service instance to request to
+		host := service.GetNextHost()
+
+		// call HTTP client
+		responseBody, statusCode, err = h.httpClient.Request(
+			ctx,
+			request.Method,
+			host.ToURL(),
+			request.Header,
+			request.Parameters,
+			request.Payload,
+		)
+
+		// set the next instance to be used, according to the load
+		// balancing algorithm
 		h.loadBalancer.SetNextHost(ctx, service)
-	}()
+
+		retryCount++
+
+		// verify if the request should be retried to a different instance
+		shouldRetry = h.shouldRetryForwarding(retryCount, statusCode)
+	}
 
 	return responseBody, statusCode, err
+}
+
+// shouldRetryForwarding checks if a request should be retried to a different
+// instance by verifying if the number of retries has not reached the configured
+// limit, and if the status code is part of the RetryableStatusCodes list.
+func (h *DefaultHandler) shouldRetryForwarding(retryCount int, statusCode int) bool {
+	var shouldRetry bool
+
+	if retryCount > h.configuration.MaxForwardRetries {
+		return shouldRetry
+	}
+
+	for _, status := range h.configuration.RetryableStatusCodes {
+		if statusCode == status {
+			shouldRetry = true
+			break
+		}
+	}
+
+	return shouldRetry
 }

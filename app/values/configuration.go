@@ -7,6 +7,12 @@ import "fmt"
 type Configuration struct {
 	Host     *Host               // the host configuration of the reverse proxy
 	Services map[string]*Service // map of supported downstream services
+
+	// list of status codes that should result in a redirect of the request
+	// to another instance
+	RetryableStatusCodes []int
+	// maximum number of retries to different instances
+	MaxForwardRetries int
 }
 
 // GetServiceByDomain returns a pointer to a Service given a domain string

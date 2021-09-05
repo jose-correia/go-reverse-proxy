@@ -19,6 +19,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/bxcodec/httpcache"
 	glog "github.com/go-kit/kit/log"
 
 	"github.com/oklog/oklog/pkg/group"
@@ -31,20 +32,23 @@ var (
 func main() {
 	fs := flag.NewFlagSet("api", flag.ExitOnError)
 	var (
-		configFilename = fs.String("configuration_filename", "proxyConfig.yaml", "Name of the reverse proxy .yaml configuratio file")
+		configFilename      = fs.String("configuration_filename", "proxyConfig.yaml", "Name of the reverse proxy .yaml configuratio file")
+		maxHttpRetries      = fs.Int("max_http_retries", 2, "Maximum number of HTTP request retries to a single instance")
+		maxForwardRetries   = fs.Int("max_forward_retries", 2, "Maximum number of retries to be made to different instances, when one is down")
+		httpCacheTTLSeconds = fs.Int("http_cache_ttl_seconds", 60, "Maximum time-to-live of an HTTP cached object")
 	)
 	_ = fs.Parse(os.Args[1:])
 
 	ctx := context.Background()
 	logger := log.NewLogger()
 
+	// build the configuration .yaml filepath
 	currentDir, err := os.Getwd()
 	if err != nil {
 		logger.Log("module", "main", "error", err)
 		os.Exit(1)
 	}
 
-	// build the configuration .yaml filepath
 	configFilepath := fmt.Sprintf(
 		"%s/%s/%s",
 		currentDir,
@@ -63,11 +67,32 @@ func main() {
 		os.Exit(1)
 	}
 
+	configuration.MaxForwardRetries = *maxForwardRetries
+	configuration.RetryableStatusCodes = []int{http.StatusInternalServerError}
+
+	// instantiate the HTTP client
+	httpClient := httpclient.New(
+		logger,
+		time.Duration(*maxHttpRetries)*time.Second,
+		nil,
+	)
+
+	// instantiate the HTTP-Cache wrapper
+	_, err = httpcache.NewWithInmemoryCache(
+		httpClient.GetHttpClient(),
+		true,
+		time.Duration(*httpCacheTTLSeconds)*time.Second,
+	)
+	if err != nil {
+		logger.Log("module", "main", "error", err)
+		os.Exit(1)
+	}
+
 	// instantiate the proxy requests handler
 	proxyHandler := proxy.New(
 		logger,
 		*configuration,
-		httpclient.New(logger, 5*time.Second, nil),
+		httpClient,
 		loadbalancing.New(logger),
 	)
 

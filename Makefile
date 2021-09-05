@@ -14,6 +14,8 @@ lint: bin/golangci-lint
 	go vet ./...
 
 gen-mocks: bin/moq
+	./bin/moq -pkg db_mock -out ./mocks/app/clients/httpclient/client.go ./app/clients/httpclient HttpClient
+	./bin/moq -pkg db_mock -out ./mocks/app/handlers/proxy/handler.go ./app/handlers/proxy Handler
 
 bin/moq:
 	go build -o bin/moq github.com/matryer/moq

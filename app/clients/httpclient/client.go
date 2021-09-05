@@ -23,6 +23,9 @@ type HttpClient interface {
 		header http.Header,
 		parameters string,
 		payload []byte) ([]byte, int, error)
+	// GetHttpCLient is a getter for the base *net.http struct so that
+	// it can be wrapper in other modules
+	GetHttpClient() *http.Client
 }
 
 type defaultClient struct {
@@ -116,4 +119,8 @@ func (c *defaultClient) buildURL(address string, parameters string) string {
 	}
 
 	return httpAdress
+}
+
+func (c *defaultClient) GetHttpClient() *http.Client {
+	return c.httpClient
 }
