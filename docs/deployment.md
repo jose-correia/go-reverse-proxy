@@ -1,12 +1,11 @@
-# Deployment
+<h1 align="center">Deployment</h4>
 
-- [Deployment](#deployment)
-  - [Simple local deployment](#simple-local-deployment)
-  - [Deployment using docker-compose](#deployment-using-docker-compose)
-  - [Deployment to Minikube as a Helm Chart](#deployment-to-minikube-as-a-helm-chart)
-    - [1. Instaling Minikube](#1-instaling-minikube)
-    - [2. Building the Docker image](#2-building-the-docker-image)
-    - [3. Installing Helm Chart:](#3-installing-helm-chart)
+- [Simple local deployment](#simple-local-deployment)
+- [Deployment using docker-compose](#deployment-using-docker-compose)
+- [Deployment to Minikube as a Helm Chart](#deployment-to-minikube-as-a-helm-chart)
+  - [1. Instaling Minikube](#1-instaling-minikube)
+  - [2. Building the Docker image](#2-building-the-docker-image)
+  - [3. Installing Helm Chart:](#3-installing-helm-chart)
 
 
 The service is listening in the port `8080`.

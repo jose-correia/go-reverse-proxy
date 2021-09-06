@@ -24,6 +24,9 @@ serviceAccount:
   name: ""
 
 podAnnotations: {}
+  #prometheus.io/scrape: "true"
+  #prometheus.io/probe-path: "/metrics"
+  #prometheus.io/port: 8090
 
 podSecurityContext: {}
   # fsGroup: 2000
@@ -37,8 +40,9 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-  type: NodePort
+  type: ClusterIP
   port: 8080
+  metricsPort: 8090
 
 ingress:
   enabled: false

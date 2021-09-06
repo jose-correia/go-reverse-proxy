@@ -1,15 +1,15 @@
 <h1 align="center">
   <br>
-  <img width="500" src="docs/logo.png" alt="ArminC AutoExec">
+  <img width="500" src="docs/logo.png">
 </h1>
 
 <h4 align="center">A Golang scalable reverse proxy</h4>
 
 <p align="center">
   <a href="#about">About</a> •
-  <a href="#architecture-design">Architecture Design</a> •
-  <a href="#slis">SLIs</a>
   <a href="#dependencies">Dependencies</a> •
+  <a href="#architecture-design">Architecture Design</a> •
+  <a href="#sli-monitoring">SLI monitoring</a> •
   <a href="#configuration">Configuration</a> •
   <a href="#test">Test</a> •
   <a href="#deployment">Deployment</a> •
@@ -23,13 +23,17 @@ The `go-reverse-proxy` service is a Golang reverse proxy implementation, complet
 
 <h1 align="center">
   <br>
-  <img width="750" src="docs/grafana.png" alt="ArminC AutoExec">
+  <img width="500" src="docs/proxy-diagram.png">
 </h1>
 
-## Architecture Design
-The system architecture design can be viewed in the [Architecture](docs/architecture.md) doc.
+---
 
-## SLIs
+## Architecture Design
+The system architecture design can be viewed in the [Architecture Design](docs/architecture.md) doc.
+
+---
+
+## SLI monitoring
 ### Health
 - `Uptime`
 - `Request volume` **(Implemented)**
@@ -46,6 +50,12 @@ The system architecture design can be viewed in the [Architecture](docs/architec
 - `Request Processing Time`: time elapsed since the client request is read by the proxy, until it is forwarded to the downstream service;
 - `Response Processing Time`: time elapsed since the downstream service responds to the proxy, until it is forwarded to the client;
 - `Latency`: **(Implemented)** time elapsed since the proxy receives the client request, until it responds back to him.
+
+<h1 align="center">
+  <br>
+  <img width="750" src="docs/grafana.png">
+</h1>
+
 
 ## Dependencies
 - [go-kit](https://github.com/go-kit/kit)
@@ -76,10 +86,14 @@ proxy:
           port: 9090
 ```
 
+---
+
 ## Test
 ```sh
 make test
 ```
+
+---
 
 ## Deployment
 
