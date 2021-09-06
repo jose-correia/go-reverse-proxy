@@ -14,9 +14,8 @@ func BuildEndpointRegister(
 	svc proxy.Handler,
 ) api.EndpointRegister {
 	return func(router *mux.Router, options ...httpkit.ServerOption) {
-		authSubRouter := router.PathPrefix("/api").Subrouter()
-		authSubRouter.
-			Path("/").
-			Handler(NewForwardRequest(logger, svc))
+		router.PathPrefix("/proxy/").Handler(
+			NewForwardRequest(logger, svc, "proxy/"),
+		)
 	}
 }

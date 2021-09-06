@@ -3,11 +3,13 @@ package proxy
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/go-kit/kit/log"
 
 	client "go-reverse-proxy/app/clients/httpclient"
+	"go-reverse-proxy/app/common/metrics"
 	lb "go-reverse-proxy/app/handlers/loadbalancing"
 	"go-reverse-proxy/app/values"
 )
@@ -33,6 +35,7 @@ type DefaultHandler struct {
 
 func New(
 	logger log.Logger,
+	metricsCtx *metrics.MetricsContext,
 	configuration values.Configuration,
 	httpClient client.HttpClient,
 	loadBalancer lb.Handler,
@@ -44,6 +47,8 @@ func New(
 		httpClient:    httpClient,
 		loadBalancer:  loadBalancer,
 	}
+
+	svc = InstrumentationMiddleware{Next: svc, MC: metricsCtx}
 
 	return svc
 }
@@ -84,11 +89,14 @@ func (h *DefaultHandler) retryableForwarding(
 		// get next service instance to request to
 		host := service.GetNextHost()
 
+		// build downstream service url
+		url := fmt.Sprintf("%s/%s", host.ToURL(), request.Endpoint)
+
 		// call HTTP client
 		responseBody, statusCode, err = h.httpClient.Request(
 			ctx,
 			request.Method,
-			host.ToURL(),
+			url,
 			request.Header,
 			request.Parameters,
 			request.Payload,

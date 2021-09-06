@@ -18,6 +18,4 @@ proxy:
       domain: local.com
       hosts:
         - address: "127.0.0.1"
-          port: 8000
-        - address: "127.0.0.1"
-          port: 8001
+          port: 5000

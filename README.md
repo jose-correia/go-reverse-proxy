@@ -21,13 +21,18 @@
 
 The `go-reverse-proxy` service is a Golang reverse proxy implementation, completely configured to be deployed in a Kubernetes environment and scale as needed.
 
+<h1 align="center">
+  <br>
+  <img width="600" src="docs/grafana.png" alt="ArminC AutoExec">
+</h1>
+
 ## Architecture Design
 The system architecture design can be viewed in the [Architecture](docs/architecture.md) doc.
 
 ## SLIs
 ### Health
 - `Uptime`
-- `Request volume`
+- `Request volume` **(Implemented)**
 - `Success rate`: percentage of non 4xx-5xx status code responses;
 
 ### Resource usage
@@ -40,7 +45,7 @@ The system architecture design can be viewed in the [Architecture](docs/architec
 
 - `Request Processing Time`: time elapsed since the client request is read by the proxy, until it is forwarded to the downstream service;
 - `Response Processing Time`: time elapsed since the downstream service responds to the proxy, until it is forwarded to the client;
-- `Latency`: time elapsed since the proxy receives the client request, until it responds back to him.
+- `Latency`: **(Implemented)** time elapsed since the proxy receives the client request, until it responds back to him.
 
 ## Dependencies
 - [go-kit](https://github.com/go-kit/kit)

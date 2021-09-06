@@ -3,6 +3,7 @@ package proxy_test
 import (
 	"context"
 	"go-reverse-proxy/app/common/log"
+	"go-reverse-proxy/app/common/metrics"
 	"go-reverse-proxy/app/handlers/loadbalancing"
 	"go-reverse-proxy/app/handlers/proxy"
 	"go-reverse-proxy/app/values"
@@ -24,6 +25,7 @@ func newProxyHandler(
 
 	return proxy.New(
 		logger,
+		metrics.New(log.NewNopLogger(), "test"),
 		*configuration,
 		httpClient,
 		loadBalancer,
@@ -76,6 +78,7 @@ func TestForward(t *testing.T) {
 		context.Background(),
 		&values.Request{
 			Method:     "GET",
+			Endpoint:   "api/v1",
 			Header:     http.Header{},
 			HostHeader: "my-domain.com",
 			Parameters: "",
@@ -87,7 +90,7 @@ func TestForward(t *testing.T) {
 	assert.Equal(t, http.StatusOK, status)
 	assert.Equal(t, []byte{}, response)
 	assert.Equal(t, 1, len(httpClient.RequestCalls()))
-	assert.Equal(t, "127.0.0.1:5000", httpClient.RequestCalls()[0].Address)
+	assert.Equal(t, "127.0.0.1:5000/api/v1", httpClient.RequestCalls()[0].Address)
 	assert.Equal(t, "GET", httpClient.RequestCalls()[0].Method)
 }
 
@@ -108,6 +111,7 @@ func TestForwardServiceNotFound(t *testing.T) {
 		context.Background(),
 		&values.Request{
 			Method:     "GET",
+			Endpoint:   "api/v1",
 			Header:     http.Header{},
 			HostHeader: "my-domain.com",
 			Parameters: "",
@@ -166,6 +170,7 @@ func TestForwardWithRetriesExceeded(t *testing.T) {
 		context.Background(),
 		&values.Request{
 			Method:     "GET",
+			Endpoint:   "api/v1",
 			Header:     http.Header{},
 			HostHeader: "my-domain.com",
 			Parameters: "",
@@ -177,7 +182,7 @@ func TestForwardWithRetriesExceeded(t *testing.T) {
 	assert.Equal(t, http.StatusInternalServerError, status)
 	assert.Equal(t, []byte{}, response)
 	assert.Equal(t, 3, len(httpClient.RequestCalls()))
-	assert.Equal(t, "127.0.0.1:5000", httpClient.RequestCalls()[0].Address)
-	assert.Equal(t, "127.0.0.1:5001", httpClient.RequestCalls()[1].Address)
-	assert.Equal(t, "127.0.0.1:5000", httpClient.RequestCalls()[2].Address)
+	assert.Equal(t, "127.0.0.1:5000/api/v1", httpClient.RequestCalls()[0].Address)
+	assert.Equal(t, "127.0.0.1:5001/api/v1", httpClient.RequestCalls()[1].Address)
+	assert.Equal(t, "127.0.0.1:5000/api/v1", httpClient.RequestCalls()[2].Address)
 }

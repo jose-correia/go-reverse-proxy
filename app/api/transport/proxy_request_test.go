@@ -17,7 +17,7 @@ import (
 )
 
 func TestProxyRequest(t *testing.T) {
-	url := "http://127.0.0.1:5000/api/?parameter-key=test"
+	url := "http://127.0.0.1:5000/proxy/api/v1/users?parameter-key=test"
 	responseBody := `{
   "message": "Hello World!", 
 }`
@@ -30,6 +30,7 @@ func TestProxyRequest(t *testing.T) {
 	handler := transport.NewForwardRequest(
 		log.NewNopLogger(),
 		forwardRequestProviderMock,
+		"proxy/",
 	)
 
 	req := httptest.NewRequest("PATCH", url, nil)
@@ -44,6 +45,7 @@ func TestProxyRequest(t *testing.T) {
 	assert.Equal(t, "application/json", resp.Header.Get("Content-Type"))
 
 	assert.Equal(t, "service.com", forwardRequestProviderMock.ForwardCalls()[0].Request.HostHeader)
+	assert.Equal(t, "api/v1/users", forwardRequestProviderMock.ForwardCalls()[0].Request.Endpoint)
 	assert.Equal(t, "parameter-key=test", forwardRequestProviderMock.ForwardCalls()[0].Request.Parameters)
 	assert.Len(t, forwardRequestProviderMock.ForwardCalls(), 1)
 
@@ -53,7 +55,7 @@ func TestProxyRequest(t *testing.T) {
 }
 
 func TestProxyRequestError(t *testing.T) {
-	url := "http://127.0.0.1:5000/api/"
+	url := "http://127.0.0.1:5000/proxy/"
 
 	forwardRequestProviderMock := &proxyMock.HandlerMock{
 		ForwardFunc: func(ctx context.Context, request *values.Request) ([]byte, int, error) {
@@ -64,6 +66,7 @@ func TestProxyRequestError(t *testing.T) {
 	handler := transport.NewForwardRequest(
 		log.NewNopLogger(),
 		forwardRequestProviderMock,
+		"proxy/",
 	)
 
 	req := httptest.NewRequest("GET", url, nil)

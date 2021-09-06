@@ -3,9 +3,10 @@ package values
 import "net/http"
 
 type Request struct {
-	Method     string
-	Header     http.Header
-	HostHeader string
-	Parameters string
-	Payload    []byte
+	Method     string      // HTTP method
+	Endpoint   string      // Endpoint of the downstream service that is being requested
+	Header     http.Header // Request headers
+	HostHeader string      // Host header
+	Parameters string      // URL query parameters
+	Payload    []byte      // Request payload data
 }
