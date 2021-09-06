@@ -23,7 +23,7 @@ The `go-reverse-proxy` service is a Golang reverse proxy implementation, complet
 
 <h1 align="center">
   <br>
-  <img width="600" src="docs/grafana.png" alt="ArminC AutoExec">
+  <img width="750" src="docs/grafana.png" alt="ArminC AutoExec">
 </h1>
 
 ## Architecture Design
