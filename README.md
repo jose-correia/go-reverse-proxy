@@ -97,6 +97,8 @@ make unit-test
 
 ### Running JMeter load test
 
+**Requires**: [Apache JMeter](https://jmeter.apache.org/)
+
 To facilitate testing the service for a large amount of concurrent user requests, I implemented a simple load testing automation that does the following:
 
 1. Runs the reverse proxy service;
@@ -115,3 +117,36 @@ make load-test
 
 ## Usage
 
+The service contains one endpoint which accepts any HTTP method, path and query parameters. Any path after the ```proxy/``` route will be the destination endpoint where the request will be sent.
+
+```
+http://127.0.0.1:8080/proxy/
+```
+
+The client identifies the downstream service that he wants to access to, by specifying the ```Host``` HTTP header, which must be a valid service ```domain``` in the proxy configuration file, otherwise he will receive a ```404 - Not Found``` response.
+
+```json
+"Host": "users.com"
+```
+
+
+
+#### Example
+
+The next cURL request will result in making a ```GET``` request to the endpoint ```/api/v1/users``` of the service configured with domain ```users.com```, and with the query parameters ```par1=foo``` and ```par2=bar```.
+
+```shell
+curl --location --request GET 'http://127.0.0.1:8080/proxy/api/v1/users?par1=foo&par2=bar' \
+--header 'Host: users.com'
+```
+
+The proxy also supports sending JSON data in the request body, which will be forwarded to the downstream service:
+
+```shell
+curl --location --request GET 'http://127.0.0.1:8080/proxy/api/v1/users' \
+--header 'Host: users.com' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "message": "Hello World!"
+}'
+```

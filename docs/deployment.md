@@ -15,6 +15,8 @@
 
 ## Configuration
 
+1. Create a .env file with the environment variables configuration (the values below represent the default values if no file is created):
+
 ```yaml
 CONFIGURATION_FILENAME: "proxyConfig.yaml"
 MAX_HTTP_RETRIES: 2
@@ -23,9 +25,7 @@ HTTP_CACHE_TTL_SECONDS: 60
 METRICS_ADDR: ":8090"
 ```
 
-
-
-The template configuration file can be found in [Proxy Config](proxy-configs/proxyConfig.yaml)
+2. Add your own service routes to the proxy configuration file which can be found in ```proxy-configs/```:
 
 ```yaml
 proxy:
@@ -53,21 +53,31 @@ proxy:
 make run
 ```
 
----
+
 
 ## Deployment using docker-compose
 ```sh
 docker-compose run reverse-proxy
 ```
 
-**Note:** 
-- Since Docker for MacOS is actually running inside a Linux VM, you won't be able to access the container even though the service is using the `network_mode: host`. With this being said, the [Simple local deployment](#simple-local-deployment) should be a better approach in this situation.
 
----
 
 ## Deployment to Minikube as a Helm Chart
 
-### 1. Instaling Minikube
+The service can be easily plugged in a Kubernetes cluster by intalling the respective Helm Chart. The deployment is configured to consume the following resources:
+
+```yaml
+resource:
+	limits:
+		cpu: 600m # maximum CPU that the pod is allowed to request
+		memory: 512Mi # maximum memory hat the pod is allowed to request
+	requests:
+		cpu: 100m # CPU initially allocated to the pod
+		memory: 128Mi # Memory initially allocated to the pod
+```
+
+1. Instaling Minikube
+
 ```console
 brew install minikube
 ```
@@ -75,7 +85,8 @@ brew install minikube
 minikube start
 ```
 
-### 2. Building the Docker image
+2. Building the Docker image
+
 ```sh
 eval $(minikube docker-env)
 ```
@@ -84,8 +95,19 @@ eval $(minikube docker-env)
 make docker-build
 ```
 
-### 3. Installing Helm Chart:
+3. Installing Helm Chart in the Kubernetes cluster
+
 ```sh
 make helm-install
+```
+
+Finally, you can see your deployment  and the respective pod by executing:
+
+```shell
+kubectl get deployment | grep reverse-proxy
+```
+
+```shell
+kubectl get pod | grep reverse-proxy
 ```
 
