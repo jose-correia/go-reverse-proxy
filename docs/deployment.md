@@ -1,19 +1,13 @@
 <h1 align="center">Deployment</h4>
+<p align="center">
+  <a href="#initial-configuration">Initial Configuration</a> •
+  <a href="#local-deployment">Local Deployment</a> •
+  <a href="#deploying-to-kubernetes-as-a-helm-chart">Deploying to Kubernetes as a Helm Chart</a>
+</p>
 
-- [Configuration](#configuration)
 
-- [Simple local deployment](#simple-local-deployment)
 
-- [Deployment using docker-compose](#deployment-using-docker-compose)
-
-- [Deployment to Minikube as a Helm Chart](#deployment-to-minikube-as-a-helm-chart)
-  - [1. Instaling Minikube](#1-instaling-minikube)
-  - [2. Building the Docker image](#2-building-the-docker-image)
-  - [3. Installing Helm Chart:](#3-installing-helm-chart)
-  
-  
-
-## Configuration
+## Initial Configuration
 
 1. Create a .env file with the environment variables configuration (the values below represent the default values if no file is created):
 
@@ -47,22 +41,27 @@ proxy:
 
 
 
+## Local Deployment
 
-## Simple local deployment
+There are two ways for deploying the system locally:
+
+### Simple execution
+
 ```sh
 make run
 ```
 
+### Using docker-compose
 
-
-## Deployment using docker-compose
 ```sh
 docker-compose run reverse-proxy
 ```
 
 
 
-## Deployment to Minikube as a Helm Chart
+
+
+## Deploying to Kubernetes as a Helm Chart
 
 The service can be easily plugged in a Kubernetes cluster by intalling the respective Helm Chart. The deployment is configured to consume the following resources:
 
@@ -76,7 +75,7 @@ resource:
 		memory: 128Mi # Memory initially allocated to the pod
 ```
 
-1. Instaling Minikube
+1. **For a local Kubernetes environment:** install Minikube
 
 ```console
 brew install minikube
@@ -85,7 +84,7 @@ brew install minikube
 minikube start
 ```
 
-2. Building the Docker image
+2. Build the Docker image
 
 ```sh
 eval $(minikube docker-env)
@@ -95,7 +94,7 @@ eval $(minikube docker-env)
 make docker-build
 ```
 
-3. Installing Helm Chart in the Kubernetes cluster
+3. Install Helm Chart in the Kubernetes cluster
 
 ```sh
 make helm-install
