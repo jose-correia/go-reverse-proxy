@@ -1,1 +1,4 @@
 bin/*
+
+jmeter.log
+jmeter_test_results.jtl
