@@ -14,8 +14,13 @@ proxy:
         - address: "10.0.0.2"
           port: 9090
 
-    - name: local
-      domain: local.com
+    - name: test-service
+      domain: test.com
       hosts:
         - address: "127.0.0.1"
-          port: 5000
+          port: 8000
+        - address: "127.0.0.1"
+          port: 8001
+        - address: "127.0.0.1"
+          port: 8002
+

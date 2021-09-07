@@ -1,14 +1,51 @@
 <h1 align="center">Deployment</h4>
 
+- [Configuration](#configuration)
+
 - [Simple local deployment](#simple-local-deployment)
+
 - [Deployment using docker-compose](#deployment-using-docker-compose)
+
 - [Deployment to Minikube as a Helm Chart](#deployment-to-minikube-as-a-helm-chart)
   - [1. Instaling Minikube](#1-instaling-minikube)
   - [2. Building the Docker image](#2-building-the-docker-image)
   - [3. Installing Helm Chart:](#3-installing-helm-chart)
+  
+  
+
+## Configuration
+
+```yaml
+CONFIGURATION_FILENAME: "proxyConfig.yaml"
+MAX_HTTP_RETRIES: 2
+MAX_FORWARD_RETRIES: 2
+HTTP_CACHE_TTL_SECONDS: 60
+METRICS_ADDR: ":8090"
+```
 
 
-The service is listening in the port `8080`.
+
+The template configuration file can be found in [Proxy Config](proxy-configs/proxyConfig.yaml)
+
+```yaml
+proxy:
+
+  listen:
+    address: "127.0.0.1"
+    port: 8080
+
+  services:
+
+    - name: my-service
+      domain: my-service.my-company.com
+      hosts:
+        - address: "10.0.0.1"
+          port: 9090
+        - address: "10.0.0.2"
+          port: 9090
+```
+
+
 
 
 ## Simple local deployment

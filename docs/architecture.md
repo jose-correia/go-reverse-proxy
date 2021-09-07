@@ -5,6 +5,8 @@
 - Round-Robin Load Balancing
 - Service instance downtime recovery
 
+and scale vertically as more resources are required
+
 ## Managing services downtime
 
 <h1 align="center">
