@@ -146,12 +146,12 @@ The service can be easily plugged in a Kubernetes cluster by intalling the respe
 
 ```yaml
 resource:
-	limits:
-		cpu: 600m # maximum CPU that the pod is allowed to request
-		memory: 512Mi # maximum memory hat the pod is allowed to request
-	requests:
-		cpu: 100m # CPU initially allocated to the pod
-		memory: 128Mi # Memory initially allocated to the pod
+  limits:
+    cpu: 600m # maximum CPU that the pod is allowed to request
+    memory: 512Mi # maximum memory hat the pod is allowed to request
+  requests:
+    cpu: 100m # CPU initially allocated to the pod
+    memory: 128Mi # Memory initially allocated to the pod
 ```
 
 1. **Install Minikube for a local Kubernetes cluster**
