@@ -1,5 +1,3 @@
-all: gen-mocks lint test build
-
 # Build the Golang binary
 build:
 	./scripts/compile.sh
@@ -54,7 +52,4 @@ helm-install:
 # Upgrade already-installed Helm Chart
 helm-upgrade:
 	helm upgrade reverse-proxy helm-charts/reverse-proxy --values helm-charts/reverse-proxy/values.yaml
-
-
-
 

@@ -4,8 +4,6 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	klog "github.com/go-kit/kit/log"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go-reverse-proxy/app/api"
 	"go-reverse-proxy/app/api/transport"
 	"go-reverse-proxy/app/clients/httpclient"
@@ -22,6 +20,9 @@ import (
 	"syscall"
 	"time"
 
+	klog "github.com/go-kit/kit/log"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
 	"github.com/jose-correia/httpcache"
 
 	glog "github.com/go-kit/kit/log"
@@ -34,6 +35,7 @@ var (
 )
 
 func main() {
+	// parsing environment variables
 	fs := flag.NewFlagSet("api", flag.ExitOnError)
 	var (
 		configFilename      = fs.String("configuration_filename", "proxyConfig.yaml", "Name of the reverse proxy .yaml configuratio file")
@@ -44,6 +46,7 @@ func main() {
 	)
 	_ = fs.Parse(os.Args[1:])
 
+	// creating logger instance and context
 	logger := log.NewLogger()
 	metricsCtx := metrics.New(logger, "reverseproxy")
 	ctx := metrics.IntoContext(context.Background(), metricsCtx)
@@ -148,6 +151,8 @@ func main() {
 	logger.Log("exiting...", g.Run())
 }
 
+// preparePrometheus creates the start and close functions that
+// are served to the prometheus goroutine
 func preparePrometheus(
 	logger klog.Logger,
 	addr string,
@@ -173,6 +178,8 @@ func preparePrometheus(
 	return startFunc, closeFunc, nil
 }
 
+// prepareHTTPServer creates the start and close functions that
+// are served to the proxy HTTP server goroutine
 func prepareHTTPServer(
 	logger klog.Logger,
 	addr string,
@@ -204,6 +211,8 @@ func prepareHTTPServer(
 	return startFunc, closeFunc, nil
 }
 
+// prepareShutdown creates the start and close functions that are
+// served to the goroutine that handle OS signals and shutdowning
 func prepareShutdown(logger klog.Logger, closers ...func(error)) (func() error, func(error)) {
 	cancelInterrupt := make(chan struct{})
 

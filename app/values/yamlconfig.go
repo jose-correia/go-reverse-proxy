@@ -2,7 +2,7 @@ package values
 
 import "fmt"
 
-// Type YamlConfig the structure where the proxy
+// Type YamlConfig is the structure where the proxy
 // configuration .yaml will be parsed into
 type YamlConfig struct {
 	Proxy ProxyYamlConfig

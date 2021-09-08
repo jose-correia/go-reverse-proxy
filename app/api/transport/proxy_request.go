@@ -39,7 +39,9 @@ func NewForwardRequest(
 	}
 }
 
+// ServeHTTP receives a http request, calls the Proxy provider and serves the response
 func (c *forwardRequestHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	// get the path of the service to be accessed
 	pathSplit := strings.Split(req.URL.Path, c.routePrefix)
 
 	var endpoint string
@@ -47,6 +49,7 @@ func (c *forwardRequestHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.R
 		endpoint = pathSplit[1]
 	}
 
+	// read payload from buffer
 	payload, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		c.logger.Log("transport", "proxyRequest/HTTP", "error", err.Error())
@@ -58,6 +61,7 @@ func (c *forwardRequestHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.R
 		return
 	}
 
+	// execute proxy forwarding
 	response, statusCode, err := c.provider.Forward(
 		req.Context(),
 		&values.Request{
