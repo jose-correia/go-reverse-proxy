@@ -11,7 +11,8 @@
   <a href="#deployment">Deployment</a> •
   <a href="#testing">Testing</a> •
   <a href="#api-usage">API Usage</a> •
-  <a href="#slis-and-monitoring">SLIs and Monitoring</a>
+  <a href="#slis-and-monitoring">SLIs and Monitoring</a> •
+  <a href="#improvements">Improvements</a>
 </p>
 
 
@@ -302,4 +303,13 @@ In order to correctly visualize these metrics, I created a [Grafana](https://gra
   <br>
   <img width="750" src="resources/grafana.png">
 </h1>
+
+
+
+## Improvements
+
+- Use a hosted Cache system, which will allow to persist the cache data even if the service goes down.
+- Perform the load balancing that decides the next service instance in a separate goroutine. This will enable the load balancing to scale for more complex algorithms, but keeping the reduced latency and making sure that it does not impact the time it takes to respond to the client.
+- Add e2e tests;
+- Improve security clearance and minimize attack vectors by improving the parsing of the request HTTP headers and URL. A lot of research into known attack vectors is described [here](https://github.com/GrrrDog/weird_proxies).
 

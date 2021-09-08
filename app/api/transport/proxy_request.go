@@ -86,5 +86,4 @@ func (c *forwardRequestHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.R
 		encoder.Encode(req.Context(), &encoder.Error{Code: http.StatusInternalServerError, Message: err.Error()}, w)
 		return
 	}
-	c.logger.Log("transport", "proxyRequest/HTTP")
 }
