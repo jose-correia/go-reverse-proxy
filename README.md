@@ -19,7 +19,7 @@
 
 ## About
 
-The `go-reverse-proxy` is a low-latency reverse proxy implementation in Golang, ready to be deployed in any Kubernetes cluster. The configurations are very straightforward and only require a couple environment variables and changing the configuration file in ```proxy-configs/```.
+The `go-reverse-proxy` is a low-latency reverse proxy implementation in Golang, ready to be deployed in any Kubernetes cluster. Configuring the service simply requires setting a couple environment variables and changing the downstream services configuration file.
 
 
 #### Main functionalities include:
@@ -51,7 +51,7 @@ The `go-reverse-proxy` is a low-latency reverse proxy implementation in Golang, 
 
 ### Requirements
 
-The main requirements of the system that defined how it should be designed are:
+The following system requirements were set:
 
 - It must be resilient to network issues in the proxy->service layer;
 - It must be resilient to an outage in a servie intance;
@@ -69,9 +69,7 @@ The load balancer logic implements a Round-Robin algorithm which defines, after 
 
 Low latency is assured by the HTTP cache, which stores the service responses in-memory for a configurable amount of seconds, before purging the data. When adding this to the fact that the proxy runs in Golang, which has a recognized capability to execute thousands of goroutines with very low impact on the system, makes it so that we can serve thousands of customers concurrently, with a reduced amount of resources.
 
-
-
-### Best-Practices
+### Architecture Principles
 
 The system was design with the SOLID principles in mind, trying to push for separation of concerns and reduce dependencies between different packages. Packages expose well-defined interfaces with no-more that 2 methods at most.
 
@@ -233,7 +231,7 @@ The service contains one endpoint which accepts any HTTP method, path and query 
 http://127.0.0.1:8080/proxy/
 ```
 
-The client identifies the downstream service that he wants to access to, by specifying the ```Host``` HTTP header, which must be a valid service ```domain``` in the proxy configuration file, otherwise he will receive a ```404 - Not Found``` response.
+The client identifies the downstream service that he wants to access to, by specifying the ```Host``` HTTP header as shown in the snippet below. This Host must match the service ```domain``` in the proxy configuration file, otherwise a ```404 - Not Found``` response will be returned.
 
 ```json
 Header: "Host: users.com"
@@ -243,14 +241,14 @@ Header: "Host: users.com"
 
 #### Example
 
-The next cURL request will result in making a ```GET``` request to the endpoint ```/api/v1/users``` of the service configured with domain ```users.com```, and with the query parameters ```par1=foo``` and ```par2=bar```.
+The snippet below shows a template cURL request which makes a ```GET```  to the endpoint ```/api/v1/users``` of the downstream service configured with domain ```users.com```, using the query parameters ```par1=foo``` and ```par2=bar```.
 
 ```shell
 curl --location --request GET 'http://127.0.0.1:8080/proxy/api/v1/users?par1=foo&par2=bar' \
 --header 'Host: users.com'
 ```
 
-The proxy also supports sending JSON data in the request body, which will be forwarded to the downstream service:
+As shown below, the proxy also supports sending ```JSON``` data in the request body, which will be forwarded to the downstream service:
 
 ```shell
 curl --location --request GET 'http://127.0.0.1:8080/proxy/api/v1/users' \
